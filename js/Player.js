@@ -4,7 +4,7 @@ class Player {
         this.y = startY * tileSize;
         this.color = 'red';
         this.speed = 4;
-        this.size = 40;
+        this.size = 28;
         this.yVelocity = 0; // Vertical velocity for jumping
         this.gravity = 0.5; // Gravity effect
         this.jumpStrength = -10; // Strength of the jump
@@ -58,16 +58,28 @@ class Player {
     
         if (this.directions.isJumping && !this.isOnGround() && this.isOnWall() && (this.directions.left || this.directions.right)) {
             if (this.directions.right) {
-                this.yVelocity = this.jumpStrength;
                 this.directions.isJumping = true;
                 this.directions.right = false;
-                this.x -= this.speed * 6;
+                let newX = this.x - this.speed * 6;
+
+                // Vérifie si la nouvelle position est walkable
+                while (!this.gameMap.isWalkable(newX, this.y, this.size)) {
+                    newX += 1; // Ajustez la position progressivement jusqu'à ce qu'elle soit walkable
+                }
+                this.yVelocity = this.jumpStrength;
+                this.x = newX;
             }
             if (this.directions.left) {
-                this.yVelocity = this.jumpStrength;
                 this.directions.isJumping = true;
                 this.directions.left = false;
-                this.x += this.speed * 6;
+                let newX = this.x + this.speed * 6;
+
+                // Vérifie si la nouvelle position est walkable
+                while (!this.gameMap.isWalkable(newX, this.y, this.size)) {
+                    newX -= 1; // Ajustez la position progressivement jusqu'à ce qu'elle soit walkable
+                }
+                this.yVelocity = this.jumpStrength;
+                this.x = newX;
             }
         }
     }
